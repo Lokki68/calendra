@@ -65,9 +65,11 @@ export default function EventForm({
 
     try {
       await action(values);
+      router.push("/events");
     } catch (error: any) {
+      // Handle any error that occurs during the action (e.g., network error)
       form.setError("root", {
-        message: `There was an error saving your event: ${error.message}`,
+        message: `There was an error saving your event ${error.message}`,
       });
     }
   }
@@ -148,8 +150,8 @@ export default function EventForm({
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
-                  <FormLabel>Active</FormLabel>
                 </FormControl>
+                <FormLabel>Active</FormLabel>
               </div>
               <FormDescription>
                 Inactive events will not be visible for users to book

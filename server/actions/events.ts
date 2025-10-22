@@ -6,7 +6,6 @@ import { eventFormSchema } from "@/schema/event";
 import { auth } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export async function createEvent(
@@ -16,17 +15,17 @@ export async function createEvent(
     const { userId } = await auth();
     const { success, data } = eventFormSchema.safeParse(unsafeData);
 
+    console.log("created console => ", success, userId);
+
     if (!success || !userId) {
       throw new Error("Invalid event data or user not authenticated");
     }
 
-    db.insert(EventTable).values({ ...data, clerkUserId: userId });
+    await db.insert(EventTable).values({ ...data, clerkUserId: userId });
   } catch (error: any) {
     throw new Error(`Failed to create event: ${error.message || error}`);
   } finally {
     revalidatePath("/events");
-
-    redirect("/events");
   }
 }
 
@@ -81,6 +80,16 @@ export async function deleteEvent(id: string): Promise<void> {
     throw new Error(`Failed to delete event: ${error.message || error}`);
   } finally {
     revalidatePath("/events");
-    redirect("/events");
   }
+}
+
+type EventRow = typeof EventTable.$inferSelect;
+
+export async function getEvents(clerkUserId: string): Promise<EventRow[]> {
+  const events = await db.query.EventTable.findMany({
+    where: ({ clerkUserId: userIdCol }, { eq }) => eq(userIdCol, clerkUserId),
+    orderBy: ({ name }, { asc, sql }) => asc(sql`lower(${name})`),
+  });
+
+  return events;
 }
