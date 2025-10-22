@@ -39,7 +39,7 @@ export default function EventForm({
   event?: {
     id: string;
     name: string;
-    description: string;
+    description: string | undefined;
     durationInMinutes: number;
     isActive: boolean;
   };
