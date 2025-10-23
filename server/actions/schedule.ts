@@ -14,9 +14,7 @@ type AvailabilityRow = typeof ScheduleAvailabilityTable.$inferSelect;
 
 export type FullSchedule = ScheduleRow & { availabilities: AvailabilityRow[] };
 
-export async function getSchedule(
-  userId: string
-): Promise<FullSchedule | null> {
+export async function getSchedule(userId: string): Promise<FullSchedule> {
   const schedule = await db.query.ScheduleTable.findFirst({
     where: ({ clerkUserId }, { eq }) => eq(clerkUserId, userId),
     with: {
@@ -24,7 +22,7 @@ export async function getSchedule(
     },
   });
 
-  return schedule as FullSchedule | null;
+  return schedule as FullSchedule;
 }
 
 export async function saveSchedule(

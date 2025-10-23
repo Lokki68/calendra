@@ -105,7 +105,8 @@ export default function ScheduleForm({
                 <SelectContent>
                   {Intl.supportedValuesOf("timeZone").map((timezone) => (
                     <SelectItem key={timezone} value={timezone}>
-                      {`(${formatTimezoneOffset(timezone)}) `}
+                      {timezone}
+                      {` (${formatTimezoneOffset(timezone)}) `}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -116,7 +117,7 @@ export default function ScheduleForm({
         />
 
         {/* Availability form */}
-        <div className="grid grid-cols-[auto auto] gap-y-6">
+        <div className="grid grid-cols-[auto_auto] gap-y-6">
           {DAYS_OF_WEEK_IN_ORDER.map((dayOfWeek) => (
             <Fragment key={dayOfWeek}>
               <div className="capitalize text-sm font-semibold ">
